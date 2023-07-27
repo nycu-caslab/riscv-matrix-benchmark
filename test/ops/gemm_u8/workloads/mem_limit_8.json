@@ -1,0 +1,30 @@
+{
+  "workloads": [
+    {
+      "name" : "gemm_default_test",
+      "description" : "mxt-perf-mem-limit-8",
+      "config" : "baseline-default.cfg",
+      "extra_config" : "mem_limit_8.cfg",
+      "extension" : "RVM",
+      "simulator" : "gem5",
+      "gem5_binaries" :
+      {
+        "bin_path" : "/home/nober/matrix-gem5",
+        "name" : "baseline"
+      },
+      "compiler_opt" : [
+        {
+          "name" : "rvm",
+          "val" : "-O2 -D__RVM__ -DPERF"
+        }
+      ],
+      "params" : [
+        [16, 16, 16],
+        [32, 32, 32],
+        [64, 64, 64],
+        [128, 128, 128]
+      ],
+      "rvv_vl" : "m1"
+    }
+  ]
+}

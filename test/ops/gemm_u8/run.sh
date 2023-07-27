@@ -1,0 +1,1 @@
+python test.py workloads.json
