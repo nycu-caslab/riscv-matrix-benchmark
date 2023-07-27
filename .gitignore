@@ -9,3 +9,4 @@ m5out
 .gdb_history
 
 *.gdb
+*.pyc

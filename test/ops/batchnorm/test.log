@@ -1,0 +1,19 @@
+make[1]: warning: jobserver unavailable: using -j1.  Add '+' to parent make rule.
+make[1]: Entering directory '/home/nober/riscv-matrix-project/riscv-dnn/test/ops/batchnorm'
+rm -f test.elf test.o crt.o syscalls.o test.dump test.map *.sig
+make[1]: Leaving directory '/home/nober/riscv-matrix-project/riscv-dnn/test/ops/batchnorm'
+make[1]: warning: jobserver unavailable: using -j1.  Add '+' to parent make rule.
+make[1]: Entering directory '/home/nober/riscv-matrix-project/riscv-dnn/test/ops/batchnorm'
+clang --target=riscv64-unknown-elf  -march=rv64gv0p10zfh0p1 -menable-experimental-extensions -g -mcmodel=medany -mllvm -ffast-math -fno-common -fno-builtin-printf -I../../../include/env -I../../../include/common -I../../../src -DH=2 -DW=3 -DC=4 -O0 -D__GEM5__ -c -o test.o test.c
+/bin/bash: line 1: clang: command not found
+make[1]: *** [../../../common.mk:85: test.o] Error 127
+make[1]: Leaving directory '/home/nober/riscv-matrix-project/riscv-dnn/test/ops/batchnorm'
+run on gem5
+Traceback (most recent call last):
+  File "/home/nober/riscv-matrix-project/riscv-dnn/test/ops/batchnorm/test.py", line 90, in <module>
+    test(key+'-'+str(i), params[i], defs)
+  File "/home/nober/riscv-matrix-project/riscv-dnn/test/ops/batchnorm/test.py", line 67, in test
+    result = from_txt( f'{simulator}.sig', golden, 0 )
+  File "/home/nober/riscv-matrix-project/riscv-dnn/test/ops/batchnorm/../../../utils/check.py", line 22, in from_txt
+    with open(fpath) as file:
+FileNotFoundError: [Errno 2] No such file or directory: 'gem5.sig'
