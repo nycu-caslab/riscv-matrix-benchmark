@@ -1,0 +1,11 @@
+m5out
+
+*.bin
+*.o
+*.elf
+*.map
+*.dump
+
+.gdb_history
+
+*.gdb
