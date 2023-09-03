@@ -31,13 +31,14 @@ def golden_check(m, k, n):
     vs1 = np.ones((m, k)).astype('uint8')
     vs2 = np.ones((k, n)).astype('uint8')
     vd = np.matmul(vs1, vs2, dtype=np.uint8)
+    print("vd\n",vd)
 
     vs1.tofile("src1.bin")
     vs2.tofile("src2.bin")
     vd.tofile('golden.bin')
 
 
-    return np.matrix(vd), np.matrix(vs1), np.matrix(vs2)
+    return  np.matrix(vs1), np.matrix(vs2), np.matrix(vd)
 
 def gen_mnemonic(outfile, *arg):
     vs1, vs2, vd = arg
@@ -92,7 +93,9 @@ def test(num, params, defs, cpu_opts_list, wm, root_dir=""):
     stat_dir = os.path.join(root_dir, f'{num}-{wm.gen_stats_name(params)}.stats')
     
     os.makedirs(stat_dir, exist_ok=True)
-
+    os.system(f"pwd");
+    # f_name = "./classify/"+num+"_gem5.sig"
+    # os.system(f"cp  ./m5out/gem5.sig  {f_name}")
     os.system(f"cp -r m5out {stat_dir}/")
     os.system(f"mv {gem5_outlog} {stat_dir}/")
     os.system(f"mv test.dump {stat_dir}/")
@@ -106,6 +109,7 @@ def test(num, params, defs, cpu_opts_list, wm, root_dir=""):
 
     golden_mnemonic = f'{stat_dir}/golden.txt'
     gen_mnemonic(golden_mnemonic, *golden)
+    print("Test done")
 
 
 

@@ -1,0 +1,55 @@
+{
+  "workloads": [
+    {
+      "name" : "gemm_default_test",
+      "description" : "mxt-perf",
+      "config" : "baseline-default.cfg",
+      "extension" : "RVM",
+      "simulator" : "gem5",
+      "gem5_binaries" :
+      {
+        "bin_path" : "/home/anonymouself/matrix-gem5",
+        "name" : "baseline"
+      },
+      "compiler_opt" : [
+        {
+          "name" : "rvm",
+          "val" : "-O2 -D__RVM__ -DPERF"
+        }
+      ],
+      "params" : [
+
+        [16, 16, 16]
+
+
+      ],
+      "rvv_vl" : "m1"
+    },
+    {
+      "name" : "gemm_default_test",
+      "description" : "mxt-perf",
+      "config" : "st-default.cfg",
+      "extension" : "RVM",
+      "params" : [
+        
+        [16,16,16]
+        
+      ],
+      "gem5_binaries" : 
+      {
+        "bin_path" : "/home/anonymouself/st-matrix-gem5",
+        "name" : "st"
+      }
+      ,
+      "simulator" : "gem5",
+      "rvv_vl" : "m1",
+      "compiler_opt" : [
+        {
+          "name" : "rvm",
+          "val" : "-O2 -D__RVM__ -DPERF"
+        }
+      ]
+    }
+  ],
+  "output_dir" : "out"
+}

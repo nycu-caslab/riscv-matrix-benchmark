@@ -8,7 +8,7 @@
       "simulator" : "gem5",
       "gem5_binaries" :
       {
-        "bin_path" : "/home/nober/matrix-gem5",
+        "bin_path" : "/home/anonymouself/matrix-gem5",
         "name" : "baseline"
       },
       "compiler_opt" : [
@@ -18,10 +18,13 @@
         }
       ],
       "params" : [
-        [16, 16, 16],
-        [32, 32, 32],
-        [64, 64, 64],
+
+        [16, 16, 16], 
+        [32, 32, 32], 
+        [64, 64, 64], 
         [128, 128, 128]
+
+
       ],
       "rvv_vl" : "m1"
     },
@@ -31,14 +34,16 @@
       "config" : "st-default.cfg",
       "extension" : "RVM",
       "params" : [
-        [16, 16, 16],
-        [32, 32, 32],
-        [64, 64, 64],
+        
+        [16, 16, 16], 
+        [32, 32, 32], 
+        [64, 64, 64], 
         [128, 128, 128]
+        
       ],
       "gem5_binaries" : 
       {
-        "bin_path" : "/home/nober/st-matrix-gem5",
+        "bin_path" : "/home/anonymouself/st-matrix-gem5",
         "name" : "st"
       }
       ,

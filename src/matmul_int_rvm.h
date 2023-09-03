@@ -10,10 +10,11 @@
 
 static inline int matmul_rvm_uint8(Tensor *dst, Tensor *src1, Tensor *src2)
 {
+    printf("this is uint8\n");
     int h1 = src1->h; //m
     int w1 = src1->w; //k
 
-    int h2 = src2->h;
+    int h2 = src2->h; //k
     int w2 = src2->w; //n
 
     assert(w1 == h2);
@@ -26,6 +27,7 @@ static inline int matmul_rvm_uint8(Tensor *dst, Tensor *src1, Tensor *src2)
     uint8_t *psrc1 = (uint8_t *)src1->data; //ap
     uint8_t *psrc2 = (uint8_t *)src2->data; //bp
     uint8_t *pdst = (uint8_t *)dst->data;   //cp
+    uint8_t *tmp;
 
     const int dataSize = sizeof(uint8_t);
 
@@ -34,20 +36,24 @@ static inline int matmul_rvm_uint8(Tensor *dst, Tensor *src1, Tensor *src2)
     asm volatile("msettype x0, %[rs1]"
                 : 
                 : [rs1]"r"(mtype));
+
     int i=0, j=0, k=0;
+            
+    
     for(i=0; i < h1; i += tile_m){
       asm volatile("msettilem %[rd], %[rs1]"
                     : [rd]"=r"(tile_m)
                     : [rs1]"r"(h1-i));
+
       for(j=0; j< w2; j += tile_n) {
         asm volatile("msettilen %[rd], %[rs1]"
                     : [rd]"=r"(tile_n)
                     : [rs1]"r"(w2-j));
         asm volatile("mwemulc.mi acc0, acc0, 0");
-        for(k = 0; k < w1; k+=tile_k1) {
+        for(k = 0; k < w1 / 2 ; k+=tile_k1) {
           asm volatile("msettilek %[rd], %[rs1]"
                       : [rd]"=r"(tile_k1)
-                      : [rs1]"r"(w1-k));
+                      : [rs1]"r"(w1 / 2 - k));
           asm volatile("mlae8.m tr0, (%[rs1]), %[rs2]"
                             :
                             :[rs1]"r"(psrc1+i*w1+k), [rs2]"r"(w1*dataSize));
@@ -62,6 +68,71 @@ static inline int matmul_rvm_uint8(Tensor *dst, Tensor *src1, Tensor *src2)
                       : 
                       : [rs1]"r"(pdst+i*w2+j), [rs2]"r"(w2*dataSize));
       }
+    }
+
+
+    
+    printf("print out 1st matrix\n");
+    for(int i=0;i<h1;i++){
+
+      for(int j=0;j<w1;j++){
+        printf("%d ", *( pdst+i*w2+j ));
+
+      }
+      printf("\n");
+    }
+    //Can run test.json to run , it's a simple test
+
+
+    for(i=0; i < h1; i += tile_m){
+      asm volatile("msettilem %[rd], %[rs1]"
+                    : [rd]"=r"(tile_m)
+                    : [rs1]"r"(h1-i));
+      for(j=0; j< w2; j += tile_n) {
+        asm volatile("msettilen %[rd], %[rs1]"
+                    : [rd]"=r"(tile_n)
+                    : [rs1]"r"(w2-j));
+        
+        //clear register
+        asm volatile("mwemulc.mi acc0, acc0, 0");
+        //load first half partial sum to acc0 
+        asm volatile("mlce8.m acc0, (%[rs1]), %[rs2]"
+                      : 
+                      : [rs1]"r"(pdst+i*w2+j), [rs2]"r"(w2*dataSize));
+
+        for(k = w1 / 2 ; k < w1 ; k+=tile_k1) {
+          asm volatile("msettilek %[rd], %[rs1]"
+                      : [rd]"=r"(tile_k1)
+                      : [rs1]"r"(w1 - k));
+          asm volatile("mlae8.m tr0, (%[rs1]), %[rs2]"
+                            :
+                            :[rs1]"r"(psrc1+i*w1+k), [rs2]"r"(w1*dataSize));
+          asm volatile("mlbe8.m tr1, (%[rs1]), %[rs2]"
+                      :
+                      :[rs1]"r"(psrc2+k*w2+j), [rs2]"r"(w2*dataSize));
+
+          
+          asm volatile("mma.mm acc0, tr0, tr1");
+
+
+        }
+
+
+        asm volatile("msce8.m acc0, (%[rs1]), %[rs2]"
+                      : 
+                      : [rs1]"r"(pdst+i*w2+j), [rs2]"r"(w2*dataSize));
+        
+      }
+    }
+
+    printf("print out 2nd matrix\n");
+    for(int i=0;i<h1;i++){
+
+      for(int j=0;j<w1;j++){
+        printf("%d ", *( pdst+i*w2+j ));
+
+      }
+      printf("\n");
     }
 
     return 0;
