@@ -1,0 +1,25 @@
+Global frequency set at 1000000000000 ticks per second
+warn: No dot file generated. Please install pydot to generate the dot file and pdf.
+build/RISCV/mem/mem_interface.cc:791: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (512 Mbytes)
+build/RISCV/arch/riscv/linux/se_workload.cc:60: warn: Unknown operating system; assuming Linux.
+build/RISCV/base/statistics.hh:280: warn: One of the stats is a legacy stat. Legacy stat is a stat that does not belong to any statistics::Group. Legacy stat is deprecated.
+build/RISCV/base/statistics.hh:280: warn: One of the stats is a legacy stat. Legacy stat is a stat that does not belong to any statistics::Group. Legacy stat is deprecated.
+build/RISCV/base/stats/storage.hh:279: warn: Bucket size (5) does not divide range [1:400] into equal-sized buckets. Rounding up.
+build/RISCV/base/stats/storage.hh:279: warn: Bucket size (5) does not divide range [1:250] into equal-sized buckets. Rounding up.
+build/RISCV/base/stats/storage.hh:279: warn: Bucket size (5) does not divide range [1:50] into equal-sized buckets. Rounding up.
+build/RISCV/base/stats/storage.hh:279: warn: Bucket size (5) does not divide range [1:300] into equal-sized buckets. Rounding up.
+build/RISCV/base/stats/storage.hh:279: warn: Bucket size (5) does not divide range [1:100] into equal-sized buckets. Rounding up.
+build/RISCV/base/remote_gdb.cc:381: warn: Sockets disabled, not accepting gdb connections
+gem5 Simulator System.  https://www.gem5.org
+gem5 is copyrighted software; use the --copyright option for details.
+
+gem5 version [DEVELOP-FOR-v22.0]
+gem5 compiled Aug 25 2023 22:28:02
+gem5 started Aug 31 2023 17:47:52
+gem5 executing on ttyeh-pc04, pid 848257
+command line: /home/cmyang/matrix-gem5/build/RISCV/gem5.debug --debug-flags=Exec --debug-file=trace.out --listener-mode=off /home/cmyang/matrix-gem5/configs/example/se.py --num-cpus 1 --cpu-type MinorCPU --executeInputWidth 2 --executeIssueLimit 2 --executeMemoryIssueLimit 1 --executeCommitLimit 2 --executeMemoryCommitLimit 1 --executeMemoryWidth 0 --executeMaxAccessesInMemory 2 --executeLSQRequestsQueueSize 2 --executeLSQTransfersQueueSize 2 --executeLSQStoreBufferSize 5 --executeFuncUnits MinorMatrixTimingFUPool --caches --l1d_size 128kB --cmd /home/cmyang/riscv-matrix-benchmark/test/ops/gemm_u8/test.elf --output gem5.sig
+
+MinorMatrixTimingFUPool
+**** REAL SIMULATION ****
+build/RISCV/sim/simulate.cc:194: info: Entering event queue @ 0.  Starting simulation...
+Exiting @ tick 25767500 because exiting with last active thread context

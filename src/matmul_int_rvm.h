@@ -7,8 +7,103 @@
 #include <riscv_vector.h>
 #include "../include/matrix/matrix_intrinsic.h"
 
+static inline int matmul_rvm_uint8_two_level_tiling(Tensor *dst, Tensor *src1, Tensor *src2)
+{
+    int h1 = src1->h;
+    int w1 = src1->w;
 
-static inline int matmul_rvm_uint8(Tensor *dst, Tensor *src1, Tensor *src2)
+    int h2 = src1->h;
+    int w2 = src2->w;
+
+    assert(w1 == h2);
+
+    int hout = dst->h;
+    int wout = dst->w;
+
+    assert(hout == h1 && wout == w2);
+
+    uint8_t *psrc1 = (uint8_t *)src1->data; //ap
+    uint8_t *psrc2 = (uint8_t *)src2->data; //bp
+    uint8_t *pdst = (uint8_t *)dst->data;   //cp
+
+    const int dataSize = sizeof(uint8_t);
+    int tile_m = 0, tile_n = 0, tile_k1 = 0, tile_k2 = 0;
+    int mtype = e8; // sew = e16, mlmul = 128
+    asm volatile("msettype x0, %[rs1]"
+                : 
+                : [rs1]"r"(mtype));
+    int i=0, j=0, k=0;
+    for(i = 0; i < h1; i += tile_m){
+      asm volatile("msettilem %[rd], %[rs1]"
+          : [rd]"=r"(tile_m)
+          : [rs1]"r"(h1-i));
+      for(j = 0; j < w2; j += tile_n){
+        asm volatile("msettilen %[rd], %[rs1]"
+            : [rd]"=r"(tile_n)
+            : [rs1]"r"(w2-j));
+        asm volatile("mwemulc.mi acc0, acc0, 0");
+        for(k = 0; k < w1/2; k += tile_k1){
+          asm volatile("msettilek %[rd], %[rs1]"
+              : [rd]"=r"(tile_k1)
+              : [rs1]"r"(w1/2-k));
+          asm volatile("mlae8.m tr0, (%[rs1]), %[rs2]"
+              :
+              :[rs1]"r"(psrc1+i*w1+k), [rs2]"r"(w1*dataSize));
+          asm volatile("mlbe8.m tr1, (%[rs1]), %[rs2]"
+              :
+              :[rs1]"r"(psrc2+k*w2+j), [rs2]"r"(w2*dataSize));
+          asm volatile("mma.mm acc0, tr0, tr1");
+        }
+
+        asm volatile("msce8.m acc0, (%[rs1]), %[rs2]"
+            : 
+            : [rs1]"r"(pdst+i*w2+j), [rs2]"r"(w2*dataSize));
+      } 
+    }   
+
+    for(i = 0; i < h1; i += tile_m){
+      asm volatile("msettilem %[rd], %[rs1]"
+          : [rd]"=r"(tile_m)
+          : [rs1]"r"(h1-i));
+      for(j = 0; j < w2; j += tile_n){
+        asm volatile("msettilen %[rd], %[rs1]"
+            : [rd]"=r"(tile_n)
+            : [rs1]"r"(w2-j)); 
+        asm volatile("mwemulc.mi acc0, acc0, 0");
+
+        asm volatile("mlce8.m acc0, (%[rs1]), %[rs2]"
+            :
+            : [rs1]"r"(pdst+i*w2+j), [rs2]"r"(w2*dataSize));
+            
+        for(k = w1/2; k < w1; k += tile_k1){
+          asm volatile("msettilek %[rd], %[rs1]"
+              : [rd]"=r"(tile_k1)
+              : [rs1]"r"(w1-k));
+          asm volatile("mlae8.m tr0, (%[rs1]), %[rs2]"
+              :
+              :[rs1]"r"(psrc1+i*w1+k), [rs2]"r"(w1*dataSize));
+          
+          asm volatile("mlbe8.m tr1, (%[rs1]), %[rs2]"
+              :
+              :[rs1]"r"(psrc2+k*w2+j), [rs2]"r"(w2*dataSize));
+          asm volatile("mma.mm acc0, tr0, tr1");
+        }
+        asm volatile("msce8.m acc0, (%[rs1]), %[rs2]"
+            : 
+            : [rs1]"r"(pdst+i*w2+j), [rs2]"r"(w2*dataSize));
+      } 
+    }
+
+    for (int a = 0; a < hout; a++) {
+      for (int b = 0; b < wout; b++) {
+        printf("%d ", *(pdst+a*w2+b));
+      }
+      printf("\n");
+    }
+    return 0;  
+}
+
+static inline int matmul_rvm_uint8(Tensor *dst, Tensor *src1, Tensor *src2) 
 {
     int h1 = src1->h; //m
     int w1 = src1->w; //k
@@ -63,7 +158,12 @@ static inline int matmul_rvm_uint8(Tensor *dst, Tensor *src1, Tensor *src2)
                       : [rs1]"r"(pdst+i*w2+j), [rs2]"r"(w2*dataSize));
       }
     }
-
+    for (int a = 0; a < hout; a++) {
+      for (int b = 0; b < wout; b++) {
+        printf("%d ", *(pdst+a*w2+b));
+      }
+      printf("\n");
+    }
     return 0;
 }
 

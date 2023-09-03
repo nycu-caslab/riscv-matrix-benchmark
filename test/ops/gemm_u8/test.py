@@ -37,7 +37,7 @@ def golden_check(m, k, n):
     vd.tofile('golden.bin')
 
 
-    return np.matrix(vd), np.matrix(vs1), np.matrix(vs2)
+    return np.matrix(vs1), np.matrix(vs2), np.matrix(vd)
 
 def gen_mnemonic(outfile, *arg):
     vs1, vs2, vd = arg

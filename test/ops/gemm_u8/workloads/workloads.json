@@ -8,7 +8,7 @@
       "simulator" : "gem5",
       "gem5_binaries" :
       {
-        "bin_path" : "/home/nober/matrix-gem5",
+        "bin_path" : "/home/cmyang/matrix-gem5",
         "name" : "baseline"
       },
       "compiler_opt" : [
@@ -38,7 +38,7 @@
       ],
       "gem5_binaries" : 
       {
-        "bin_path" : "/home/nober/st-matrix-gem5",
+        "bin_path" : "/home/cmyang/matrix-st-gem5",
         "name" : "st"
       }
       ,

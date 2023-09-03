@@ -21,10 +21,8 @@ int main(int argc, char **argv)
     tensor_new_2d(src1Mat, m, k, sizeof(uint8_t), src1Data);
     tensor_new_2d(src2Mat, k, n, sizeof(uint8_t), src2Data);
     tensor_new_2d(dstMat, m, n, sizeof(uint8_t), dstData);
-
-    
-    matmul_rvm_uint8(&dstMat, &src1Mat, &src2Mat);
-    
+    // matmul_rvm_uint8(&dstMat, &src1Mat, &src2Mat);
+    matmul_rvm_uint8_two_level_tiling(&dstMat, &src1Mat, &src2Mat);
 
     return 0;
 }

@@ -19,7 +19,7 @@ MAIN?=
 SPIKE := spike
 SPIKE_ARGS :=
 
-GEM5 ?= /home/nober/matrix-gem5
+GEM5 ?= /home/cmyang/matrix-st-gem5
 GEM5_OPTS :=
 GEM5_ARGS :=
 GEM5_OUTLOG := 
@@ -87,8 +87,8 @@ ifneq (x$(TC), xllvm)
 	LINK := $(PREFIX)gcc
 	CFLAGS := -g -march=rv64gv0p10zfh0p1  -DPREALLOCATE=1 -mcmodel=medany -static -ffast-math -fno-common -fno-builtin-printf -fno-tree-loop-distribute-patterns $(includes) $(defines)
 else
-	CC := /home/nober/opt/$(TC_DIR)/bin/clang $(SYSROOT) --target=riscv64-unknown-elf  -march=rv64gv0p10zfh0p1 -menable-experimental-extensions 
-	LINK :=/home/nober/opt/$(TC_DIR)/bin/clang $(SYSROOT) --target=riscv64-unknown-elf  -march=rv64gv0p10zfh0p1 -menable-experimental-extensions
+	CC := /opt/$(TC_DIR)/bin/clang $(SYSROOT) --target=riscv64-unknown-elf  -march=rv64gv0p10zfh0p1 -menable-experimental-extensions 
+	LINK := /opt/$(TC_DIR)/bin/clang $(SYSROOT) --target=riscv64-unknown-elf  -march=rv64gv0p10zfh0p1 -menable-experimental-extensions
 	CFLAGS := -g -mcmodel=medany -mllvm -ffast-math -fno-common -fno-builtin-printf $(includes) $(defines)
 endif
 
